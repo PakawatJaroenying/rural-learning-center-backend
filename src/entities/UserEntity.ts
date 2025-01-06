@@ -1,5 +1,7 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToMany } from "typeorm";
 import { UserRole } from "../types/User";
+import { CourseEntity } from "./CourseEntity";
+import { CourseStudentEntity } from "./CourseStudentEntity";
 
 @Entity("users")
 export class UserEntity {
@@ -25,4 +27,10 @@ export class UserEntity {
 
 	@Column({ type: "text", nullable: true })
 	refreshToken: string | null = null;
+
+	@ManyToMany(() => CourseEntity, course => course.teachers)
+	courseTeachers!: CourseEntity[];
+
+	@OneToMany(() => CourseStudentEntity, course => course.student)
+  	courseStudent!: CourseStudentEntity[];
 }

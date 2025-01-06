@@ -1,6 +1,8 @@
 import { DataSource } from "typeorm";
 import dotenv from "dotenv";
 import { UserEntity } from "./entities/UserEntity";
+import { CourseEntity } from "./entities/CourseEntity";
+import { CourseStudentEntity } from "./entities/CourseStudentEntity";
 
 dotenv.config();
 
@@ -13,8 +15,8 @@ export const AppDataSource = new DataSource({
 	database: process.env.DB_NAME,
 	synchronize: process.env.DB_SYNC === "true", // ใช้ ENV เพื่อตั้งค่า synchronize
 	logging: process.env.NODE_ENV === "development", // เปิด logging ใน Dev Mode เท่านั้น
-	entities: [UserEntity], // เพิ่ม Entity ที่ต้องการใช้
-	// migrations: ["./migrations/*.{ts,js}"],
+	entities: [UserEntity, CourseEntity, CourseStudentEntity], // เพิ่ม Entity ที่ต้องการใช้
+	migrations: ["./src/migrations/*.ts"],
 	ssl: {
 		rejectUnauthorized: false, // ปิดการตรวจสอบใบรับรอง
 	  },

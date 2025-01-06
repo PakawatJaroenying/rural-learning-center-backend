@@ -96,7 +96,7 @@ app.use(morgan('dev')); // Logger สำหรับ HTTP requests ที่ช�
 
 ## TypeORM Migrations
 ```bash
-npx ts-node ./node_modules/typeorm/cli.js migration:generate src/migrations/Init --data-source src/data-source.ts
+npx ts-node ./node_modules/typeorm/cli.js migration:generate src/migrations/addedCourseEntity --data-source src/data-source.ts
 npx ts-node ./node_modules/typeorm/cli.js migration:run --data-source src/data-source.ts
 ```
 ### การย้อนกลับ (Revert Migration)
