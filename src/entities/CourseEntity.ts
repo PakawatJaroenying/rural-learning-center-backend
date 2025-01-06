@@ -35,24 +35,39 @@ export class CourseEntity {
 	@Column()
 	location: string = "";
 
-    @Column()
+	@Column()
 	youtubeLink: string = "";
 
-    @Column({
+	@Column({
 		type: "boolean",
 		default: true,
 	})
 	isActive: boolean = true;
 
-
 	@ManyToMany(() => UserEntity, (teacher) => teacher.courseTeachers)
 	@JoinTable({
-        name: "course_teachers",
-    })
+		name: "course_teachers",
+	})
 	teachers!: UserEntity[];
 
 	@OneToMany(() => CourseStudentEntity, (courseStudent) => courseStudent.course)
-	courseStudents!: CourseStudentEntity[]; // ความสัมพันธ์กับตารางเชื่อม
+	courseStudents!: CourseStudentEntity[];
 
-	
+	@Column({
+		type: "timestamp",
+		default: () => "CURRENT_TIMESTAMP",
+	})
+	createdAt: Date = new Date();
+
+	@Column({
+		type: "timestamp",
+		nullable: true,
+	})
+	updatedAt: Date | null = null;
+
+	@ManyToOne(() => UserEntity)
+	createdBy!: UserEntity;
+
+	@ManyToOne(() => UserEntity)
+	updatedBy: UserEntity | null = null;
 }

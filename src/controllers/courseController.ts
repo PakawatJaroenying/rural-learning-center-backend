@@ -23,6 +23,16 @@ const getAllCourses = async (req: Request, res: Response) => {
 	}
 };
 
+const getActivateCourses = async (req: Request, res: Response) => {
+	try {
+		const courses = await courseService.getActivateCourses();
+		successResponse(res, courses, "Courses retrieved successfully", 200);
+	} catch (error) {
+		console.error(error);
+		errorResponse(res, "Server error", 500);
+	}
+};
+
 const getById = async (
 	req: Request<
 		{},
@@ -76,6 +86,8 @@ const createCourse = async (
 				youtubeLink,
 				isActive,
 				teachers: [teacher!],
+				createdAt: new Date(),
+				createdBy: teacher!,
 			});
 			successResponse(res, newCourse, "User registered successfully", 201);
 		} catch {
@@ -125,7 +137,8 @@ const editCourse = async (
 				location,
 				youtubeLink,
 				isActive,
-				teachers: [teacher!],
+				updatedAt: new Date(),
+				updatedBy: teacher!,
 			});
 			successResponse(res, updatedCourse, "User registered successfully", 201);
 		} catch {
@@ -138,4 +151,4 @@ const editCourse = async (
 	}
 };
 
-export { createCourse, getAllCourses, getById, editCourse };
+export { createCourse, getAllCourses, getById, editCourse,getActivateCourses };

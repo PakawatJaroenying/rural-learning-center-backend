@@ -5,9 +5,17 @@ import jwt from "jsonwebtoken";
 import { JwtPayload } from "../models/jwtPayloadModel";
 import { CourseEntity } from "../entities/CourseEntity";
 import { CreateCourseModel } from "../models/courseModel";
+import { LessThanOrEqual, MoreThanOrEqual } from "typeorm";
 
 interface CreateCourseModelRepo extends CreateCourseModel {
 	teachers: UserEntity[];
+	createdAt: Date;
+	createdBy: UserEntity;
+}
+
+interface UpdateCourseModelRepo extends CreateCourseModel {
+	updatedAt: Date;
+	updatedBy: UserEntity;
 }
 
 @Service()
@@ -15,7 +23,24 @@ class CourseService {
 	private courseRepository = AppDataSource.getRepository(CourseEntity);
 
 	async getAllCourses(): Promise<CourseEntity[]> {
-		return await this.courseRepository.find();
+		return await this.courseRepository.find({
+			order: {
+				id: "ASC",
+			},
+		});
+	}
+
+	async getActivateCourses(): Promise<CourseEntity[]> {
+		return await this.courseRepository.find({
+			where: {
+				isActive: true,
+				startDate: LessThanOrEqual(new Date()),
+				endDate: MoreThanOrEqual(new Date()),
+			},
+			order: {
+				id: "ASC",
+			},
+		});
 	}
 
 	async getById(id: number): Promise<CourseEntity | null> {
@@ -29,7 +54,10 @@ class CourseService {
 		return await this.courseRepository.save(newCourse);
 	}
 
-	async updateCourse(id: number, model: CreateCourseModelRepo): Promise<CourseEntity | null> {
+	async updateCourse(
+		id: number,
+		model: UpdateCourseModelRepo
+	): Promise<CourseEntity | null> {
 		const course = await this.courseRepository.findOneBy({ id });
 		if (!course) {
 			return null;

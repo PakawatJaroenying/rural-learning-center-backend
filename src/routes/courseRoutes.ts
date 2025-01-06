@@ -4,7 +4,7 @@ import { authMiddleware } from "../middlewares/authMiddleware";
 import { courseCreateValidator, courseEditValidator, courseGetByIdValidator } from "../validators/courseValidator";
 import roleMiddleware from "../middlewares/roleMiddleware";
 import { UserRole } from "../types/User";
-import { createCourse, editCourse, getAllCourses, getById } from "../controllers/courseController";
+import { createCourse, editCourse, getActivateCourses, getAllCourses, getById } from "../controllers/courseController";
 
 const router = Router();
 
@@ -14,7 +14,7 @@ router.post(
 	// roleMiddleware([UserRole.ADMIN]),
 	// courseCreateValidator,
 	// validateRequest,
-	getAllCourses,
+	getActivateCourses,
 );
 
 router.post(
