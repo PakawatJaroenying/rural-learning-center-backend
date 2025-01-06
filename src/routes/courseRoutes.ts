@@ -5,6 +5,7 @@ import { courseCreateValidator, courseEditValidator, courseGetByIdValidator } fr
 import roleMiddleware from "../middlewares/roleMiddleware";
 import { UserRole } from "../types/User";
 import { createCourse, editCourse, getActivateCourses, getAllCourses, getById } from "../controllers/courseController";
+import upload from "../middlewares/multerMiddleware";
 
 const router = Router();
 
@@ -39,6 +40,7 @@ router.post(
 	"/create",
 	authMiddleware,
 	roleMiddleware([UserRole.ADMIN]),
+	upload.single("coverImage"),
 	courseCreateValidator,
 	validateRequest,
 	createCourse,
@@ -48,6 +50,7 @@ router.post(
 	"/update",
 	authMiddleware,
 	roleMiddleware([UserRole.ADMIN]),
+	upload.single("coverImage"),
 	courseEditValidator,
 	validateRequest,
 	editCourse,

@@ -70,6 +70,8 @@ const createCourse = async (
 			isActive,
 		} = req.body;
 
+		const file = req.file;
+
 		const queryRunner = AppDataSource.createQueryRunner();
 		await queryRunner.connect();
 		await queryRunner.startTransaction();
@@ -78,6 +80,7 @@ const createCourse = async (
 				currentUserService.getCurrentUser()!.username
 			);
 			const newCourse = await courseService.createCourse({
+				coverImage: file ? (file as any).location : null, // URL ของไฟล์ใน Spaces
 				title,
 				description,
 				startDate,
@@ -122,6 +125,7 @@ const editCourse = async (
 			isActive,
 		} = req.body;
 
+		const file = req.file;
 		const queryRunner = AppDataSource.createQueryRunner();
 		await queryRunner.connect();
 		await queryRunner.startTransaction();
@@ -129,17 +133,21 @@ const editCourse = async (
 			const teacher = await userService.findByUsername(
 				currentUserService.getCurrentUser()!.username
 			);
-			const updatedCourse = await courseService.updateCourse(Number(req.query.id), {
-				title,
-				description,
-				startDate,
-				endDate,
-				location,
-				youtubeLink,
-				isActive,
-				updatedAt: new Date(),
-				updatedBy: teacher!,
-			});
+			const updatedCourse = await courseService.updateCourse(
+				Number(req.query.id),
+				{
+					coverImage: file ? (file as any).location : null,
+					title,
+					description,
+					startDate,
+					endDate,
+					location,
+					youtubeLink,
+					isActive,
+					updatedAt: new Date(),
+					updatedBy: teacher!,
+				}
+			);
 			successResponse(res, updatedCourse, "User registered successfully", 201);
 		} catch {
 			await queryRunner.rollbackTransaction();
@@ -151,4 +159,4 @@ const editCourse = async (
 	}
 };
 
-export { createCourse, getAllCourses, getById, editCourse,getActivateCourses };
+export { createCourse, getAllCourses, getById, editCourse, getActivateCourses };

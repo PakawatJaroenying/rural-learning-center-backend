@@ -16,6 +16,12 @@ export class CourseEntity {
 	@PrimaryGeneratedColumn()
 	id!: number;
 
+	@Column({
+		type: "text",
+		nullable: true,
+	})
+	coverImage: string | null = null;
+
 	@Column()
 	title: string = "";
 

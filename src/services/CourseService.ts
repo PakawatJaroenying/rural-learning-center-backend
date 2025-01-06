@@ -9,11 +9,13 @@ import { LessThanOrEqual, MoreThanOrEqual } from "typeorm";
 
 interface CreateCourseModelRepo extends CreateCourseModel {
 	teachers: UserEntity[];
+	coverImage: string | null;
 	createdAt: Date;
 	createdBy: UserEntity;
 }
 
 interface UpdateCourseModelRepo extends CreateCourseModel {
+	coverImage: string | null;
 	updatedAt: Date;
 	updatedBy: UserEntity;
 }
