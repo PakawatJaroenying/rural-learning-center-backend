@@ -16,8 +16,8 @@ export const AppDataSource = new DataSource({
 	synchronize: process.env.DB_SYNC === "true", // ใช้ ENV เพื่อตั้งค่า synchronize
 	logging: process.env.NODE_ENV === "development", // เปิด logging ใน Dev Mode เท่านั้น
 	entities: [UserEntity, CourseEntity, CourseStudentEntity], // เพิ่ม Entity ที่ต้องการใช้
+	ssl: {
+		rejectUnauthorized: false, // ปิดการตรวจสอบใบรับรอง
+	  },
 	// migrations: ["./src/migrations/*.ts"],
-	// ssl: {
-	// 	rejectUnauthorized: false, // ปิดการตรวจสอบใบรับรอง
-	//   },
 });
