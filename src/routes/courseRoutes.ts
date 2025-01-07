@@ -25,7 +25,7 @@ router.post(
 
 router.get(
 	"/getById",
-	authMiddleware,
+	// authMiddleware,
 	// roleMiddleware([UserRole.ADMIN]),
 	courseGetByIdValidator,
 	validateRequest,
