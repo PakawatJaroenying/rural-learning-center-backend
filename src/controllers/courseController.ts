@@ -54,8 +54,13 @@ const getById = async (
 			res,
 			{
 				...course,
-				teachers: course?.teachers.map((teacher) => teacher.image),
-				can_enroll: !isLoggedIn ? true : !(await courseStudentService.checkEnrolled(Number(id))),
+				teachers: course?.teachers.map((teacher) => ({
+					image:teacher.image,
+					name: teacher.name,					
+				})),
+				can_enroll: !isLoggedIn
+					? true
+					: !(await courseStudentService.checkEnrolled(Number(id))),
 				applicants_count: course?.courseStudents?.length || 0,
 			},
 			"Course retrieved successfully",
