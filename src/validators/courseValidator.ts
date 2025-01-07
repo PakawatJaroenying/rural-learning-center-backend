@@ -2,7 +2,13 @@ import { body, oneOf, query } from "express-validator";
 import Container from "typedi";
 import UserService from "../services/UserService";
 import bcrypt from "bcrypt";
+import { CurrentUserService } from "../services/CurrentUserService";
+import CourseService from "../services/CourseService";
+import CourseStudentService from "../services/CourseStudentService";
 
+const currentUserService = Container.get(CurrentUserService);
+const courseService = Container.get(CourseService);
+const courseStudentService = Container.get(CourseStudentService);
 
 export const courseCreateValidator = [
 	body("title").notEmpty().withMessage("Title is required"),
@@ -21,10 +27,30 @@ export const courseCreateValidator = [
 ];
 
 export const courseEditValidator = [
-    ...courseCreateValidator,
-    query("id").notEmpty().withMessage("ID is required"),
+	...courseCreateValidator,
+	query("id").notEmpty().withMessage("ID is required"),
 ];
 
 export const courseGetByIdValidator = [
-    query("id").notEmpty().withMessage("ID is required"),
+	query("id").notEmpty().withMessage("ID is required"),
+];
+
+export const courseEnrollValidator = [
+	body("id")
+		.notEmpty()
+		.withMessage("Course ID is required")
+		.custom(async (value) => {
+			const userService = Container.get(UserService);
+			const user = await userService.findByUsername(
+				currentUserService.getCurrentUser()?.username!
+			);
+			if (!user) {
+				throw new Error("User not found");
+			}
+			const isEnrolled = await courseStudentService.checkEnrolled(Number(value))
+			if(isEnrolled){
+				throw new Error("ลงทะเบียนเรียนไปแล้ว");
+			}
+			return true;
+		}),
 ];

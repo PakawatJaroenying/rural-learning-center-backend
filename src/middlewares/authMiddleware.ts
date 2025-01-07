@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 import { Container } from "typedi";
 import { JwtPayload } from "../models/jwtPayloadModel";
-import { CurrentUserService } from "../services/CurrentUser";
+import { CurrentUserService } from "../services/CurrentUserService";
 import { errorResponse } from "../utils/ApiResponse";
 
 const currentUserService = Container.get(CurrentUserService);

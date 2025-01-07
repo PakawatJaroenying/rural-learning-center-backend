@@ -1,20 +1,16 @@
 import { Router } from "express";
 import { validateRequest } from "../middlewares/validationMiddleware";
 import { authMiddleware } from "../middlewares/authMiddleware";
-import { courseCreateValidator, courseEditValidator, courseGetByIdValidator } from "../validators/courseValidator";
+import { courseCreateValidator, courseEditValidator, courseEnrollValidator, courseGetByIdValidator } from "../validators/courseValidator";
 import roleMiddleware from "../middlewares/roleMiddleware";
 import { UserRole } from "../types/User";
-import { createCourse, deleteCourse, editCourse, getActivateCourses, getAllCourses, getById } from "../controllers/courseController";
+import { createCourse, deleteCourse, editCourse, enrollCourse, getActivateCourses, getAllCourses, getById } from "../controllers/courseController";
 import upload from "../middlewares/multerMiddleware";
 
 const router = Router();
 
 router.post(
 	"/getActiveCourses",
-	// authMiddleware,
-	// roleMiddleware([UserRole.ADMIN]),
-	// courseCreateValidator,
-	// validateRequest,
 	getActivateCourses,
 );
 
@@ -61,6 +57,15 @@ router.post(
 	authMiddleware,
 	roleMiddleware([UserRole.ADMIN]),
 	deleteCourse,
+);
+
+router.post(
+	"/enroll",
+	authMiddleware,
+	roleMiddleware([UserRole.USER]),
+	courseEnrollValidator,
+	validateRequest,
+	enrollCourse,
 );
 
 export default router;

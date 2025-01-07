@@ -5,12 +5,14 @@ import Container from "typedi";
 import UserService from "../services/UserService";
 import { RegisterRequest } from "../models/authModel";
 import bcrypt from "bcrypt";
-import { CurrentUserService } from "../services/CurrentUser";
+import { CurrentUserService } from "../services/CurrentUserService";
 import { CreateCourseModel } from "../models/courseModel";
 import CourseService from "../services/CourseService";
+import CourseStudentService from "../services/CourseStudentService";
 
 const courseService = Container.get(CourseService);
 const userService = Container.get(UserService);
+const courseStudentService = Container.get(CourseStudentService);
 const currentUserService = Container.get(CurrentUserService);
 
 const getAllCourses = async (req: Request, res: Response) => {
@@ -53,6 +55,8 @@ const getById = async (
 			{
 				...course,
 				teachers: course?.teachers.map((teacher) => teacher.image),
+				can_enroll: !(await courseStudentService.checkEnrolled(Number(id))),
+				applicants_count: course?.courseStudents?.length || 0,
 			},
 			"Course retrieved successfully",
 			200
@@ -208,6 +212,33 @@ const deleteCourse = async (
 	}
 };
 
+const enrollCourse = async (
+	req: Request<
+		{},
+		{},
+		{
+			id: string;
+		},
+		{}
+	>,
+	res: Response
+) => {
+	try {
+		const createdCourseStudent = await courseStudentService.enrollCourse(
+			Number(req.body.id)
+		);
+		successResponse(
+			res,
+			createdCourseStudent,
+			"Course enrolled successfully",
+			200
+		);
+	} catch (error) {
+		console.error(error);
+		errorResponse(res, "Server error", 500);
+	}
+};
+
 export {
 	createCourse,
 	getAllCourses,
@@ -215,4 +246,5 @@ export {
 	editCourse,
 	getActivateCourses,
 	deleteCourse,
+	enrollCourse,
 };

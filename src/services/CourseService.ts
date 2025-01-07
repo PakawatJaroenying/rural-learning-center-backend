@@ -24,7 +24,7 @@ interface UpdateCourseModelRepo extends CreateCourseModel {
 @Service()
 class CourseService {
 	private courseRepository = AppDataSource.getRepository(CourseEntity);
-
+	
 	async getAllCourses(): Promise<CourseEntity[]> {
 		return await this.courseRepository.find({
 			order: {
@@ -48,8 +48,8 @@ class CourseService {
 
 	async getById(id: number): Promise<CourseEntity | null> {
 		return await this.courseRepository.findOne({
-			where:{ id},
-			relations: ['teachers']
+			where: { id },
+			relations: ["teachers",'courseStudents'],
 		});
 	}
 
@@ -73,6 +73,8 @@ class CourseService {
 	async deleteCourse(id: number): Promise<void> {
 		await this.courseRepository.delete(id);
 	}
+
+	
 }
 
 export default CourseService;

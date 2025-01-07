@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { UserRole } from "../types/User";
 import Container from "typedi";
-import { CurrentUserService } from "../services/CurrentUser";
+import { CurrentUserService } from "../services/CurrentUserService";
 import UserService from "../services/UserService";
 import { errorResponse } from "../utils/ApiResponse";
 

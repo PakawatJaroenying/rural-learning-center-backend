@@ -10,7 +10,7 @@ import {
 } from "../models/authModel";
 import bcrypt from "bcrypt";
 import { JwtPayload } from "../models/jwtPayloadModel";
-import { CurrentUserService } from "../services/CurrentUser";
+import { CurrentUserService } from "../services/CurrentUserService";
 import dayjs from "dayjs";
 
 const userService = Container.get(UserService);
