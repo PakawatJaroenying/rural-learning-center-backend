@@ -49,13 +49,13 @@ const getById = async (
 	try {
 		const { id } = req.query;
 		const course = await courseService.getById(Number(id));
-		console.log(course);
+		const isLoggedIn = currentUserService.getCurrentUser()?.id;
 		successResponse(
 			res,
 			{
 				...course,
 				teachers: course?.teachers.map((teacher) => teacher.image),
-				can_enroll: !(await courseStudentService.checkEnrolled(Number(id))),
+				can_enroll: !isLoggedIn ? true : !(await courseStudentService.checkEnrolled(Number(id))),
 				applicants_count: course?.courseStudents?.length || 0,
 			},
 			"Course retrieved successfully",
