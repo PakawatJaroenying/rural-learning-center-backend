@@ -30,7 +30,7 @@ router.post(
 router.get(
 	"/getById",
 	authMiddleware,
-	roleMiddleware([UserRole.ADMIN]),
+	// roleMiddleware([UserRole.ADMIN]),
 	courseGetByIdValidator,
 	validateRequest,
 	getById,

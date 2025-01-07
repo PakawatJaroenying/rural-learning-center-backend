@@ -12,11 +12,29 @@ class UserService {
 		return await this.userRepository.findOneBy({ username });
 	}
 
-	async createUser(
-		username: string,
-		hashedPassword: string
-	): Promise<UserEntity> {
+	async createUser({
+		username,
+		hashedPassword,
+		parentName,
+		phoneNumber,
+		address,
+		schoolName,
+		name,
+	}: {
+		username: string;
+		hashedPassword: string;
+		name: string;
+		parentName?: string;
+		phoneNumber?: string;
+		address?: string;
+		schoolName?: string;
+	}): Promise<UserEntity> {
 		const newUser = this.userRepository.create({
+			name,
+			parentName,
+			phoneNumber,
+			address,
+			schoolName,
 			username,
 			password: hashedPassword,
 		});

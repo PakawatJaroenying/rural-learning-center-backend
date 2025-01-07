@@ -21,13 +21,29 @@ const register = async (
 	res: Response
 ) => {
 	try {
-		const { username, password } = req.body;
+		const {
+			name,
+			username,
+			password,
+			address,
+			parentName,
+			phoneNumber,
+			schoolName,
+		} = req.body;
 		const queryRunner = AppDataSource.createQueryRunner();
 		await queryRunner.connect();
 		await queryRunner.startTransaction();
 		try {
 			const hashedPassword = await bcrypt.hash(password, 10);
-			const newUser = await userService.createUser(username, hashedPassword);
+			const newUser = await userService.createUser({
+				name,
+				address,
+				parentName,
+				phoneNumber,
+				schoolName,
+				username,
+				hashedPassword,
+			});
 			successResponse(res, newUser, "User registered successfully", 201);
 		} catch {
 			await queryRunner.rollbackTransaction();

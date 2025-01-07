@@ -8,9 +8,6 @@ export class UserEntity {
 	@PrimaryGeneratedColumn()
 	id!: number;
 
-	@Column()
-	name: string = "";
-
 	@Column({ unique: true })
 	username: string = "";
 
@@ -27,6 +24,22 @@ export class UserEntity {
 
 	@Column({ type: "text", nullable: true })
 	refreshToken: string | null = null;
+
+	@Column()
+	name: string = "";
+
+	@Column({ type: 'text', nullable: true })
+    parentName: string | null = null;
+
+    @Column({ type: 'text', nullable: true })
+    phoneNumber: string | null = null;
+
+    @Column({ type: 'text', nullable: true })
+    address: string | null = null;
+
+    @Column({ type: 'text', nullable: true })
+    schoolName: string | null = null;
+
 
 	@ManyToMany(() => CourseEntity, course => course.teachers)
 	courseTeachers!: CourseEntity[];
