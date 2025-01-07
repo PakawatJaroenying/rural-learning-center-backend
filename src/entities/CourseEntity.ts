@@ -25,8 +25,24 @@ export class CourseEntity {
 	@Column()
 	title: string = "";
 
+	@Column({
+		default: "",
+	})
+	titleEn: string = "";
+
+	@Column({
+		type:'float',
+		default: 0
+	})
+	duration: number = 0;
+
 	@Column()
 	description: string = "";
+
+	@Column({
+		default: "",
+	})
+	shortDescription: string = "";
 
 	@Column({
 		type: "timestamp",
@@ -37,6 +53,12 @@ export class CourseEntity {
 		type: "timestamp",
 	})
 	endDate: Date = new Date();
+
+	@Column({
+		type: "timestamp",
+		default: () => "CURRENT_TIMESTAMP",
+	})
+	teachingDate: Date = new Date();
 
 	@Column()
 	location: string = "";

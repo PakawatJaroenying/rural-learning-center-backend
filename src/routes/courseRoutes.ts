@@ -4,7 +4,7 @@ import { authMiddleware } from "../middlewares/authMiddleware";
 import { courseCreateValidator, courseEditValidator, courseGetByIdValidator } from "../validators/courseValidator";
 import roleMiddleware from "../middlewares/roleMiddleware";
 import { UserRole } from "../types/User";
-import { createCourse, editCourse, getActivateCourses, getAllCourses, getById } from "../controllers/courseController";
+import { createCourse, deleteCourse, editCourse, getActivateCourses, getAllCourses, getById } from "../controllers/courseController";
 import upload from "../middlewares/multerMiddleware";
 
 const router = Router();
@@ -54,6 +54,13 @@ router.post(
 	courseEditValidator,
 	validateRequest,
 	editCourse,
+);
+
+router.post(
+	"/delete",
+	authMiddleware,
+	roleMiddleware([UserRole.ADMIN]),
+	deleteCourse,
 );
 
 export default router;

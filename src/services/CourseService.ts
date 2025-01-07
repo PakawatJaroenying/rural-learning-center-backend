@@ -15,6 +15,7 @@ interface CreateCourseModelRepo extends CreateCourseModel {
 }
 
 interface UpdateCourseModelRepo extends CreateCourseModel {
+	teachers: UserEntity[];
 	coverImage: string | null;
 	updatedAt: Date;
 	updatedBy: UserEntity;
@@ -46,8 +47,9 @@ class CourseService {
 	}
 
 	async getById(id: number): Promise<CourseEntity | null> {
-		return await this.courseRepository.findOneBy({
-			id,
+		return await this.courseRepository.findOne({
+			where:{ id},
+			relations: ['teachers']
 		});
 	}
 
@@ -66,6 +68,10 @@ class CourseService {
 		}
 		const updatedCourse = this.courseRepository.merge(course, model);
 		return await this.courseRepository.save(updatedCourse);
+	}
+
+	async deleteCourse(id: number): Promise<void> {
+		await this.courseRepository.delete(id);
 	}
 }
 

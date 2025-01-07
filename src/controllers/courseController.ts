@@ -47,9 +47,16 @@ const getById = async (
 	try {
 		const { id } = req.query;
 		const course = await courseService.getById(Number(id));
-		console.log("-----------");
 		console.log(course);
-		successResponse(res, course, "Course retrieved successfully", 200);
+		successResponse(
+			res,
+			{
+				...course,
+				teachers: course?.teachers.map((teacher) => teacher.image),
+			},
+			"Course retrieved successfully",
+			200
+		);
 	} catch (error) {
 		errorResponse(res, "Server error", 500);
 	}
@@ -68,6 +75,10 @@ const createCourse = async (
 			location,
 			youtubeLink,
 			isActive,
+			duration,
+			shortDescription,
+			teachingDate,
+			titleEn,
 		} = req.body;
 
 		const file = req.file;
@@ -88,6 +99,10 @@ const createCourse = async (
 				location,
 				youtubeLink,
 				isActive,
+				duration,
+				shortDescription,
+				teachingDate,
+				titleEn,
 				teachers: [teacher!],
 				createdAt: new Date(),
 				createdBy: teacher!,
@@ -123,6 +138,10 @@ const editCourse = async (
 			location,
 			youtubeLink,
 			isActive,
+			duration,
+			shortDescription,
+			teachingDate,
+			titleEn,
 		} = req.body;
 
 		const file = req.file;
@@ -144,8 +163,13 @@ const editCourse = async (
 					location,
 					youtubeLink,
 					isActive,
+					duration,
+					shortDescription,
+					teachingDate,
+					titleEn,
 					updatedAt: new Date(),
 					updatedBy: teacher!,
+					teachers: [teacher!],
 				}
 			);
 			successResponse(res, updatedCourse, "User registered successfully", 201);
@@ -159,4 +183,36 @@ const editCourse = async (
 	}
 };
 
-export { createCourse, getAllCourses, getById, editCourse, getActivateCourses };
+const deleteCourse = async (
+	req: Request<
+		{},
+		{},
+		{
+			id: string;
+		},
+		{}
+	>,
+	res: Response
+) => {
+	try {
+		const course = await courseService.getById(Number(req.body.id));
+		if (!course) {
+			errorResponse(res, "Course not found", 404);
+			return;
+		}
+		await courseService.deleteCourse(Number(req.body.id));
+		successResponse(res, null, "Course deleted successfully", 200);
+	} catch (error) {
+		console.error(error);
+		errorResponse(res, "Server error", 500);
+	}
+};
+
+export {
+	createCourse,
+	getAllCourses,
+	getById,
+	editCourse,
+	getActivateCourses,
+	deleteCourse,
+};

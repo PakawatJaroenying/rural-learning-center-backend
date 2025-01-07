@@ -6,4 +6,8 @@ export interface CreateCourseModel {
 	location: string;
 	youtubeLink: string;
 	isActive: boolean;
+	duration: number;
+	titleEn: string;
+	shortDescription: string;
+	teachingDate: string;
 }

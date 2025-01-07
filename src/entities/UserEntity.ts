@@ -40,6 +40,8 @@ export class UserEntity {
     @Column({ type: 'text', nullable: true })
     schoolName: string | null = null;
 
+	@Column({ type: 'text', nullable: true })
+	image: string | null = null;
 
 	@ManyToMany(() => CourseEntity, course => course.teachers)
 	courseTeachers!: CourseEntity[];
