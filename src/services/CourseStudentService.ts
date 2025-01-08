@@ -17,8 +17,11 @@ class CourseStudentService {
 	private userEntity = AppDataSource.getRepository(UserEntity);
 
 	async checkEnrolled(courseId: number): Promise<boolean> {
-        console.log('courseId',courseId)
-        console.log('Container.get(CurrentUserService).getCurrentUser()?.id',Container.get(CurrentUserService).getCurrentUser()?.id)
+		console.log("courseId", courseId);
+		console.log(
+			"Container.get(CurrentUserService).getCurrentUser()?.id",
+			Container.get(CurrentUserService).getCurrentUser()?.id
+		);
 		return !!(await this.courseStudentEntity.findOne({
 			where: {
 				course: {
@@ -32,19 +35,13 @@ class CourseStudentService {
 	}
 
 	async enrollCourse(courseId: number): Promise<CourseStudentEntity | null> {
-		const course = await this.courseRepository.findOneBy({ id: courseId });
-
-		const student = await this.userEntity.findOneBy({
-			id: Container.get(CurrentUserService).getCurrentUser()?.id,
-		});
-
-		if (!course || !student) {
-			return null;
-		}
-
 		const courseStudent = this.courseStudentEntity.create({
-			course,
-			student,
+			course: {
+				id: courseId,
+			},
+			student: {
+				id: Container.get(CurrentUserService).getCurrentUser()?.id,
+			},
 		});
 		return await this.courseStudentEntity.save(courseStudent);
 	}

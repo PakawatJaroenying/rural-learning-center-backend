@@ -55,8 +55,8 @@ const getById = async (
 			{
 				...course,
 				teachers: course?.teachers.map((teacher) => ({
-					image:teacher.image,
-					name: teacher.name,					
+					image: teacher.image,
+					name: teacher.name,
 				})),
 				can_enroll: !isLoggedIn
 					? true
@@ -96,9 +96,6 @@ const createCourse = async (
 		await queryRunner.connect();
 		await queryRunner.startTransaction();
 		try {
-			const teacher = await userService.findByUsername(
-				currentUserService.getCurrentUser()!.username
-			);
 			const newCourse = await courseService.createCourse({
 				coverImage: file ? (file as any).location : null, // URL ของไฟล์ใน Spaces
 				title,
@@ -112,9 +109,15 @@ const createCourse = async (
 				shortDescription,
 				teachingDate,
 				titleEn,
-				teachers: [teacher!],
+				teachers: [
+					{
+						id: currentUserService.getCurrentUser()?.id!,
+					},
+				],
 				createdAt: new Date(),
-				createdBy: teacher!,
+				createdBy: {
+					id: currentUserService.getCurrentUser()?.id!,
+				},
 			});
 			successResponse(res, newCourse, "User registered successfully", 201);
 		} catch {
@@ -158,9 +161,6 @@ const editCourse = async (
 		await queryRunner.connect();
 		await queryRunner.startTransaction();
 		try {
-			const teacher = await userService.findByUsername(
-				currentUserService.getCurrentUser()!.username
-			);
 			const updatedCourse = await courseService.updateCourse(
 				Number(req.query.id),
 				{
@@ -177,8 +177,12 @@ const editCourse = async (
 					teachingDate,
 					titleEn,
 					updatedAt: new Date(),
-					updatedBy: teacher!,
-					teachers: [teacher!],
+					updatedBy: { id: currentUserService.getCurrentUser()?.id! },
+					teachers: [
+						{
+							id: currentUserService.getCurrentUser()?.id!,
+						},
+					],
 				}
 			);
 			successResponse(res, updatedCourse, "User registered successfully", 201);

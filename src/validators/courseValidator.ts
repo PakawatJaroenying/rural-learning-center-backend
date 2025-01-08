@@ -47,6 +47,12 @@ export const courseEnrollValidator = [
 			if (!user) {
 				throw new Error("User not found");
 			}
+			
+			const course = await courseService.getById(Number(value));
+			if(!course || course.isActive === false){
+				throw new Error("Course not found or inactive");
+			}
+
 			const isEnrolled = await courseStudentService.checkEnrolled(Number(value))
 			if(isEnrolled){
 				throw new Error("ลงทะเบียนเรียนไปแล้ว");
