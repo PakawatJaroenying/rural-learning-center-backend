@@ -30,6 +30,7 @@ class CourseService {
 			order: {
 				id: "ASC",
 			},
+			relations: ["courseStudents"],
 		});
 	}
 

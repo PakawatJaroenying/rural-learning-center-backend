@@ -9,6 +9,7 @@ import { CurrentUserService } from "../services/CurrentUserService";
 import { CreateCourseModel } from "../models/courseModel";
 import CourseService from "../services/CourseService";
 import CourseStudentService from "../services/CourseStudentService";
+import { verifyToken } from "../utils/VerifyToken";
 
 const courseService = Container.get(CourseService);
 const userService = Container.get(UserService);
@@ -49,7 +50,8 @@ const getById = async (
 	try {
 		const { id } = req.query;
 		const course = await courseService.getById(Number(id));
-		const isLoggedIn = currentUserService.getCurrentUser()?.id;
+		const isLoggedIn = verifyToken(req.headers.authorization?.split(" ")[1] || "");
+		console.log(isLoggedIn)
 		successResponse(
 			res,
 			{
