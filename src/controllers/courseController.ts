@@ -18,7 +18,15 @@ const currentUserService = Container.get(CurrentUserService);
 const getAllCourses = async (req: Request, res: Response) => {
 	try {
 		const courses = await courseService.getAllCourses();
-		successResponse(res, courses, "Courses retrieved successfully", 200);
+		successResponse(
+			res,
+			courses.map((x) => ({
+				...x,
+				can_delete: x.courseStudents && x.courseStudents.length === 0,
+			})),
+			"Courses retrieved successfully",
+			200
+		);
 	} catch (error) {
 		console.error(error);
 		errorResponse(res, "Server error", 500);
@@ -49,9 +57,11 @@ const getById = async (
 	try {
 		const { id } = req.query;
 		const course = await courseService.getById(Number(id));
-		const currentUser = verifyToken(req.headers.authorization?.split(" ")[1] || "");
-		console.log(currentUser)
-		
+		const currentUser = verifyToken(
+			req.headers.authorization?.split(" ")[1] || ""
+		);
+		console.log(currentUser);
+
 		successResponse(
 			res,
 			{
@@ -62,7 +72,10 @@ const getById = async (
 				})),
 				can_enroll: !currentUser
 					? true
-					: !await courseStudentService.isUserEnrolledInCourse(Number(id),currentUser?.id),
+					: !(await courseStudentService.isUserEnrolledInCourse(
+							Number(id),
+							currentUser?.id
+					  )),
 				applicants_count: course?.courseStudents?.length || 0,
 			},
 			"Course retrieved successfully",
