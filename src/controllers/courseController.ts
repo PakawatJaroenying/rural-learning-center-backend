@@ -12,7 +12,6 @@ import CourseStudentService from "../services/CourseStudentService";
 import { verifyToken } from "../utils/VerifyToken";
 
 const courseService = Container.get(CourseService);
-const userService = Container.get(UserService);
 const courseStudentService = Container.get(CourseStudentService);
 const currentUserService = Container.get(CurrentUserService);
 
@@ -50,8 +49,9 @@ const getById = async (
 	try {
 		const { id } = req.query;
 		const course = await courseService.getById(Number(id));
-		const isLoggedIn = verifyToken(req.headers.authorization?.split(" ")[1] || "");
-		console.log(isLoggedIn)
+		const currentUser = verifyToken(req.headers.authorization?.split(" ")[1] || "");
+		console.log(currentUser)
+		
 		successResponse(
 			res,
 			{
@@ -60,9 +60,9 @@ const getById = async (
 					image: teacher.image,
 					name: teacher.name,
 				})),
-				can_enroll: !isLoggedIn
+				can_enroll: !currentUser
 					? true
-					: !(await courseStudentService.checkEnrolled(Number(id))),
+					: !await courseStudentService.isUserEnrolledInCourse(Number(id),currentUser?.id),
 				applicants_count: course?.courseStudents?.length || 0,
 			},
 			"Course retrieved successfully",
@@ -235,7 +235,7 @@ const enrollCourse = async (
 	res: Response
 ) => {
 	try {
-		const createdCourseStudent = await courseStudentService.enrollCourse(
+		const createdCourseStudent = await courseStudentService.addStudentToCourse(
 			Number(req.body.id)
 		);
 		successResponse(

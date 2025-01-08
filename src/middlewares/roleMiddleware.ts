@@ -22,7 +22,6 @@ const roleMiddleware = (requiredRole: UserRole[]) => {
 			return;
 		}
 
-        console.log(user)
 
 		if (!requiredRole.includes(user.role)) {
 			errorResponse(res, "Forbidden", 403);

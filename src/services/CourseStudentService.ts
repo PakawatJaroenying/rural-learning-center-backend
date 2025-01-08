@@ -5,33 +5,26 @@ import { CourseEntity } from "../entities/CourseEntity";
 import { CourseStudentEntity } from "../entities/CourseStudentEntity";
 import { CurrentUserService } from "./CurrentUserService";
 import { UpdateScoreModel } from "../models/scoreModel";
-
+const currentUserService = Container.get(CurrentUserService);
 @Service()
 class CourseStudentService {
-	private courseRepository = AppDataSource.getRepository(CourseEntity);
 	private courseStudentEntity =
 		AppDataSource.getRepository(CourseStudentEntity);
-	private userEntity = AppDataSource.getRepository(UserEntity);
 
-	async checkEnrolled(courseId: number): Promise<boolean> {
-		console.log("courseId", courseId);
-		console.log(
-			"Container.get(CurrentUserService).getCurrentUser()?.id",
-			Container.get(CurrentUserService).getCurrentUser()?.id
-		);
-		return !!(await this.courseStudentEntity.findOne({
+	async isUserEnrolledInCourse(courseId: number, userId = currentUserService.getCurrentUser()?.id): Promise<boolean> {
+		return await this.courseStudentEntity.exists({
 			where: {
 				course: {
 					id: courseId,
 				},
 				student: {
-					id: Container.get(CurrentUserService).getCurrentUser()?.id,
+					id: userId,
 				},
 			},
-		}));
+		});
 	}
 
-	async enrollCourse(courseId: number): Promise<CourseStudentEntity | null> {
+	async addStudentToCourse(courseId: number): Promise<CourseStudentEntity | null> {
 		const courseStudent = this.courseStudentEntity.create({
 			course: {
 				id: courseId,
@@ -50,8 +43,8 @@ class CourseStudentService {
 					id: courseId,
 				},
 			},
-			order:{
-				id: "ASC"
+			order: {
+				id: "ASC",
 			},
 			relations: ["course", "student"],
 		});
@@ -70,11 +63,15 @@ class CourseStudentService {
 						comment: item.comment || null,
 					}
 				);
-				return await this.courseStudentEntity.findOne({ where: { id: item.id } });
+				return await this.courseStudentEntity.findOne({
+					where: { id: item.id },
+				});
 			})
 		);
-	
-		return updatedCourseStudents.filter((student): student is CourseStudentEntity => student !== null);
+
+		return updatedCourseStudents.filter(
+			(student): student is CourseStudentEntity => student !== null
+		);
 	}
 }
 

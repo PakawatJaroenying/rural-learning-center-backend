@@ -7,12 +7,11 @@ import morgan from "morgan";
 import dotenv from "dotenv";
 import { AppDataSource } from "./data-source";
 import { setupSwagger } from "./swagger";
-import { authMiddleware } from "./middlewares/authMiddleware";
+
 dotenv.config();
 
 const app: Application = express();
 const PORT = process.env.PORT || process.env.BACKEND_PORT || 3000;
-
 
 // เชื่อมต่อฐานข้อมูล
 AppDataSource.initialize()
@@ -36,17 +35,15 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true })); // แปลง URL-encoded Body ให้เป็น JavaScript Object
 // app.use(logger);
-// app.use(authMiddleware);  
+// app.use(authMiddleware);
 // Setup Swagger
 setupSwagger(app);
-
 
 // Routes
 app.get("/", (req: Request, res: Response) => {
 	res.send("Hello World!");
 });
 app.use("/", routes);
-
 
 // Start Server
 app.listen(PORT, () => {

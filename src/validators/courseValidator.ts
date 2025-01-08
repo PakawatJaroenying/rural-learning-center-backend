@@ -53,7 +53,7 @@ export const courseEnrollValidator = [
 				throw new Error("Course not found or inactive");
 			}
 
-			const isEnrolled = await courseStudentService.checkEnrolled(Number(value))
+			const isEnrolled = await courseStudentService.isUserEnrolledInCourse(Number(value))
 			if(isEnrolled){
 				throw new Error("ลงทะเบียนเรียนไปแล้ว");
 			}
