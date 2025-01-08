@@ -5,6 +5,7 @@ import { JwtPayload } from "../models/jwtPayloadModel";
 export class CurrentUserService {
     key = '_____CURRENT_USER_____';
     setCurrentUser(user: JwtPayload): void {
+		Container.reset();
         Container.set(this.key, user);
     }
 	getCurrentUser(): JwtPayload | null {
