@@ -3,10 +3,34 @@ import { AppDataSource } from "../data-source";
 import { UserEntity } from "../entities/UserEntity";
 import jwt from "jsonwebtoken";
 import { JwtPayload } from "../models/jwtPayloadModel";
+import { DeepPartial } from "typeorm";
 
 @Service()
 class UserService {
 	private userRepository = AppDataSource.getRepository(UserEntity);
+
+	async getAllUsers(): Promise<UserEntity[]> {
+		return await this.userRepository.find();
+	}
+
+	async getUserById(id: number): Promise<UserEntity> {
+		return await this.userRepository.findOneOrFail({
+			where: { id },
+		});
+	}
+
+	async updateUserById(
+		id: number,
+		data: DeepPartial<UserEntity>
+	): Promise<UserEntity> {
+		const oldUser = await this.userRepository.findOneOrFail({ where: { id } });
+		const updatedUser = this.userRepository.merge(oldUser, data);
+		return await this.userRepository.save(updatedUser);
+	}
+
+	async deleteUserById(id: number): Promise<void> {
+		await this.userRepository.delete(id);
+	}
 
 	async findByUsername(username: string): Promise<UserEntity | null> {
 		return await this.userRepository.findOneBy({ username });

@@ -1,4 +1,11 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToMany } from "typeorm";
+import {
+	Entity,
+	PrimaryGeneratedColumn,
+	Column,
+	OneToMany,
+	ManyToMany,
+	OneToOne,
+} from "typeorm";
 import { UserRole } from "../types/User";
 import { CourseEntity } from "./CourseEntity";
 import { CourseStudentEntity } from "./CourseStudentEntity";
@@ -28,24 +35,38 @@ export class UserEntity {
 	@Column()
 	name: string = "";
 
-	@Column({ type: 'text', nullable: true })
-    parentName: string | null = null;
+	@Column({ type: "text", nullable: true })
+	parentName: string | null = null;
 
-    @Column({ type: 'text', nullable: true })
-    phoneNumber: string | null = null;
+	@Column({ type: "text", nullable: true })
+	phoneNumber: string | null = null;
 
-    @Column({ type: 'text', nullable: true })
-    address: string | null = null;
+	@Column({ type: "text", nullable: true })
+	address: string | null = null;
 
-    @Column({ type: 'text', nullable: true })
-    schoolName: string | null = null;
+	@Column({ type: "text", nullable: true })
+	schoolName: string | null = null;
 
-	@Column({ type: 'text', nullable: true })
+	@Column({ type: "text", nullable: true })
 	image: string | null = null;
 
-	@ManyToMany(() => CourseEntity, course => course.teachers)
+	@ManyToMany(() => CourseEntity, (course) => course.teachers, {
+		cascade: true,
+	})
 	courseTeachers!: CourseEntity[];
 
-	@OneToMany(() => CourseStudentEntity, course => course.student)
-  	courseStudent!: CourseStudentEntity[];
+	@OneToMany(() => CourseStudentEntity, (course) => course.student, {
+		cascade: true,
+	})
+	courseStudent!: CourseStudentEntity[];
+
+	//updateBy
+	@OneToOne(() => UserEntity)
+	updatedBy: UserEntity | null = null;
+
+	@Column({
+		type: "timestamp",
+		nullable: true,
+	})
+	updatedAt: Date | null = null;
 }

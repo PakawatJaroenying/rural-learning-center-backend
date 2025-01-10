@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import { errorResponse } from "../utils/ApiResponse";
 import { verifyToken } from "../utils/VerifyToken";
 
-export const authMiddleware = (
+export const authenMiddleware = (
 	req: Request,
 	res: Response,
 	next: NextFunction

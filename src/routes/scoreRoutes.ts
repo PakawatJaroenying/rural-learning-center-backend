@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { validateRequest } from "../middlewares/validationMiddleware";
-import { authMiddleware } from "../middlewares/authMiddleware";
+import { authenMiddleware } from "../middlewares/authMiddleware";
 import {
 	courseCreateValidator,
 	courseEditValidator,
@@ -15,7 +15,7 @@ import {
 	getById,
 	updateScore,
 } from "../controllers/scoreController";
-import { scoreGetByIdValidator } from "../validators/scoreValidator";
+import { scoreGetByIdValidator, scoreUpdateValidator } from "../validators/scoreValidator";
 import Container from "typedi";
 import { CurrentUserService } from "../services/CurrentUserService";
 
@@ -23,7 +23,7 @@ const router = Router();
 
 router.post(
 	"/getAll",
-	authMiddleware,
+	authenMiddleware,
 	Container.get(CurrentUserService).authorizeUserMiddleware,
 	roleMiddleware([UserRole.ADMIN]),
 	getAllScores
@@ -31,7 +31,7 @@ router.post(
 
 router.get(
 	"/getById",
-	authMiddleware,
+	authenMiddleware,
 	Container.get(CurrentUserService).authorizeUserMiddleware,
 	roleMiddleware([UserRole.ADMIN]),
 	scoreGetByIdValidator,
@@ -41,9 +41,10 @@ router.get(
 
 router.post(
 	"/update",
-	authMiddleware,
+	authenMiddleware,
 	Container.get(CurrentUserService).authorizeUserMiddleware,
 	roleMiddleware([UserRole.ADMIN]),
+	scoreUpdateValidator,
 	updateScore
 );
 

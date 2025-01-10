@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { validateRequest } from "../middlewares/validationMiddleware";
-import { authMiddleware } from "../middlewares/authMiddleware";
+import { authenMiddleware } from "../middlewares/authMiddleware";
 import {
 	courseCreateValidator,
 	courseEditValidator,
@@ -28,7 +28,7 @@ router.post("/getActiveCourses", getActivateCourses);
 
 router.post(
 	"/getAll",
-	authMiddleware,
+	authenMiddleware,
 	Container.get(CurrentUserService).authorizeUserMiddleware,
 	roleMiddleware([UserRole.ADMIN]),
 	getAllCourses
@@ -44,7 +44,7 @@ router.get(
 
 router.post(
 	"/create",
-	authMiddleware,
+	authenMiddleware,
 	Container.get(CurrentUserService).authorizeUserMiddleware,
 	roleMiddleware([UserRole.ADMIN]),
 	upload.single("coverImage"),
@@ -55,7 +55,7 @@ router.post(
 
 router.post(
 	"/update",
-	authMiddleware,
+	authenMiddleware,
 	Container.get(CurrentUserService).authorizeUserMiddleware,
 	roleMiddleware([UserRole.ADMIN]),
 	upload.single("coverImage"),
@@ -66,7 +66,7 @@ router.post(
 
 router.post(
 	"/delete",
-	authMiddleware,
+	authenMiddleware,
 	Container.get(CurrentUserService).authorizeUserMiddleware,
 	roleMiddleware([UserRole.ADMIN]),
 	deleteCourse
@@ -74,7 +74,7 @@ router.post(
 
 router.post(
 	"/enroll",
-	authMiddleware,
+	authenMiddleware,
 	Container.get(CurrentUserService).authorizeUserMiddleware,
 	roleMiddleware([UserRole.USER]),
 	courseEnrollValidator,

@@ -6,7 +6,7 @@ import {
 	refreshTokenValidator,
 } from "../validators/authValidators";
 import { validateRequest } from "../middlewares/validationMiddleware";
-import { authMiddleware } from "../middlewares/authMiddleware";
+import { authenMiddleware } from "../middlewares/authMiddleware";
 import Container from "typedi";
 import { CurrentUserService } from "../services/CurrentUserService";
 
@@ -17,7 +17,7 @@ router.post(
 	"/refresh-token",
 	refreshTokenValidator,
 	validateRequest,
-	authMiddleware,
+	authenMiddleware,
 	Container.get(CurrentUserService).authorizeUserMiddleware,
 	refreshToken
 );
