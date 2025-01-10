@@ -10,7 +10,9 @@ class UserService {
 	private userRepository = AppDataSource.getRepository(UserEntity);
 
 	async getAllUsers(): Promise<UserEntity[]> {
-		return await this.userRepository.find();
+		return await this.userRepository.find({
+			relations: ["courseStudent"],
+		});
 	}
 
 	async getUserById(id: number): Promise<UserEntity> {

@@ -12,7 +12,18 @@ const userService = Container.get(UserService);
 export const getAllUsers = async (req: Request, res: Response) => {
 	try {
 		const users = await userService.getAllUsers();
-		successResponse(res, users, "Users retrieved successfully", 200);
+		successResponse(
+			res,
+			users.map((x) => ({
+				...x,
+				enrolledCourses: x.courseStudent.map((y) => ({
+					id: y.course.id,
+					name: y.course.title,
+				})),
+			})),
+			"Users retrieved successfully",
+			200
+		);
 	} catch (error) {
 		console.error(error);
 		errorResponse(res, "Server error", 500);
