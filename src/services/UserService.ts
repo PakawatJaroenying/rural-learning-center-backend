@@ -11,7 +11,7 @@ class UserService {
 
 	async getAllUsers(): Promise<UserEntity[]> {
 		return await this.userRepository.find({
-			relations: ["courseStudent"],
+			relations: ["courseStudent", "courseStudent.course"],
 		});
 	}
 
