@@ -63,7 +63,7 @@ export const updateUser = async (
 		{},
 		{},
 		{
-			id: number;
+			id: string;
 			name?: string;
 			parentName?: string;
 			phoneNumber?: string;
@@ -76,9 +76,22 @@ export const updateUser = async (
 	res: Response
 ) => {
 	try {
+		const {
+			name,
+			parentName,
+			phoneNumber,
+			address,
+			schoolName,
+			role,
+		} = req.body;
 		const file = req.file;
-		const updatedUser = await userService.updateUserById(req.body.id, {
-			...req.body,
+		const updatedUser = await userService.updateUserById(Number(req.body.id), {
+			name,
+			parentName,
+			phoneNumber,
+			address,
+			schoolName,
+			role,
 			image: file ? (file as any).location : null,
 			updatedAt: new Date(),
 			updatedBy: {

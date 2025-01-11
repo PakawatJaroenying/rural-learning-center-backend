@@ -34,7 +34,7 @@ router.post(
     authenMiddleware,
     Container.get(CurrentUserService).authorizeUserMiddleware,
     roleMiddleware([UserRole.ADMIN]),
-	upload.single("coverImage"),
+	upload.single("image"),
     userUpdateValidator,
     validateRequest,
     updateUser
