@@ -6,6 +6,7 @@ import {
 	ManyToMany,
 	OneToOne,
 	JoinColumn,
+	ManyToOne,
 } from "typeorm";
 import { UserRole } from "../types/User";
 import { CourseEntity } from "./CourseEntity";
@@ -62,7 +63,7 @@ export class UserEntity {
 	courseStudent!: CourseStudentEntity[];
 
 	//updateBy
-	@OneToOne(() => UserEntity)
+	@ManyToOne(() => UserEntity)
 	@JoinColumn()
 	updatedBy: UserEntity | null = null;
 
