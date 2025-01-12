@@ -25,9 +25,11 @@ class UserService {
 		id: number,
 		data: DeepPartial<UserEntity>
 	): Promise<UserEntity> {
-		const oldUser = await this.userRepository.findOneOrFail({ where: { id } });
-		const updatedUser = this.userRepository.merge(oldUser, data);
-		return await this.userRepository.save(updatedUser);
+		const updateResult = await this.userRepository.update(id, data);
+		if (updateResult.affected === 0) {
+			throw new Error("User not found");
+		}
+		return await this.userRepository.findOneOrFail({ where: { id } });
 	}
 
 	async deleteUserById(id: number): Promise<void> {
