@@ -5,7 +5,7 @@ export const userGetByIdValidator = [
 ];
 
 export const userUpdateValidator = [
-	body("id")
+	query("id")
 		.notEmpty()
 		.withMessage("ID is required")
 ];
