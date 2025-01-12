@@ -25,7 +25,9 @@ class UserService {
 		id: number,
 		data: DeepPartial<UserEntity>
 	): Promise<UserEntity> {
-		const updateResult = await this.userRepository.update(id, data);
+		const updateResult = await this.userRepository.update({
+			id,
+		}, data);
 		if (updateResult.affected === 0) {
 			throw new Error("User not found");
 		}
