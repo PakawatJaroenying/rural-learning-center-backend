@@ -11,6 +11,8 @@ class CourseStudentService {
 	private courseStudentEntity =
 		AppDataSource.getRepository(CourseStudentEntity);
 
+		
+
 	async isUserEnrolledInCourse(courseId: number, userId = currentUserService.getCurrentUser()?.id): Promise<boolean> {
 		return await this.courseStudentEntity.exists({
 			where: {

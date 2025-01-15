@@ -5,25 +5,34 @@ import UserService from "../services/UserService";
 import { Request, Response } from "express";
 import { UserRole } from "../types/User";
 import { body } from "express-validator";
+import { PaginationRequest, PaginationResponse } from "../types/Pagination";
 
 const currentUserService = Container.get(CurrentUserService);
 const userService = Container.get(UserService);
 
-export const getAllUsers = async (req: Request, res: Response) => {
+export const getAllUsers = async (
+	req: Request<{}, {}, PaginationRequest>,
+	res: Response
+) => {
 	try {
-		const users = await userService.getAllUsers();
-		successResponse(
-			res,
-			users.map((x) => ({
+
+		const [users,totalItems] = await userService.getAllUserPageIndex(req.body);
+		const response: PaginationResponse<any> = {
+			data: users.map((x) => ({
 				...x,
 				enrolledCourses: x.courseStudent.map((y) => ({
 					id: y.course.id,
 					name: y.course.title,
 				})),
 			})),
-			"Users retrieved successfully",
-			200
-		);
+			currentPage: req.body.page,
+			pageSize: req.body.pageSize,
+			totalItems,
+			totalPages: Math.ceil(totalItems / req.body.pageSize),
+		};
+
+		// ส่ง Response
+		successResponse(res, response, "Users retrieved successfully", 200);
 	} catch (error) {
 		console.error(error);
 		errorResponse(res, "Server error", 500);
@@ -77,22 +86,16 @@ export const updateUser = async (
 	res: Response
 ) => {
 	try {
-		const {
-			name,
-			parentName,
-			phoneNumber,
-			address,
-			schoolName,
-			role,
-		} = req.body;
+		const { name, parentName, phoneNumber, address, schoolName, role } =
+			req.body;
 		const file = req.file;
 		const updatedUser = await userService.updateUserById(Number(req.query.id), {
-			name,
-			parentName,
-			phoneNumber,
-			address,
-			schoolName,
-			role,
+			name: name,
+			parentName: parentName || null,
+			phoneNumber: phoneNumber || null,
+			address: address || null,
+			schoolName: schoolName || null,
+			role: role || UserRole.USER,
 			image: file ? (file as any).location : null,
 			updatedAt: new Date(),
 			updatedBy: {

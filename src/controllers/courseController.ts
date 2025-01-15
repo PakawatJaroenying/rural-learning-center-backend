@@ -10,6 +10,7 @@ import { CreateCourseModel } from "../models/courseModel";
 import CourseService from "../services/CourseService";
 import CourseStudentService from "../services/CourseStudentService";
 import { verifyToken } from "../utils/VerifyToken";
+import { PaginationResponse } from "../types/Pagination";
 
 const courseService = Container.get(CourseService);
 const courseStudentService = Container.get(CourseStudentService);
@@ -17,13 +18,22 @@ const currentUserService = Container.get(CurrentUserService);
 
 const getAllCourses = async (req: Request, res: Response) => {
 	try {
-		const courses = await courseService.getAllCourses();
-		successResponse(
-			res,
-			courses.map((x) => ({
+		const [courses, totalItems] = await courseService.getAllCoursesPageIndex(
+			req.body
+		);
+		const response: PaginationResponse<any> = {
+			data: courses.map((x) => ({
 				...x,
 				can_delete: x.courseStudents && x.courseStudents.length === 0,
 			})),
+			currentPage: req.body.page,
+			pageSize: req.body.pageSize,
+			totalItems,
+			totalPages: Math.ceil(totalItems / req.body.pageSize),
+		};
+		successResponse(
+			res,
+			response,
 			"Courses retrieved successfully",
 			200
 		);

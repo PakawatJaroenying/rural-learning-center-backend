@@ -3,14 +3,38 @@ import { AppDataSource } from "../data-source";
 import { UserEntity } from "../entities/UserEntity";
 import jwt from "jsonwebtoken";
 import { JwtPayload } from "../models/jwtPayloadModel";
-import { DeepPartial } from "typeorm";
+import { DeepPartial, Like } from "typeorm";
+import { PaginationRequest } from "../types/Pagination";
 
 @Service()
 class UserService {
 	private userRepository = AppDataSource.getRepository(UserEntity);
 
-	async getAllUsers(): Promise<UserEntity[]> {
-		return await this.userRepository.find({
+
+	async getAllUserPageIndex(
+		request: PaginationRequest
+	): Promise<[UserEntity[], number]> {
+		const { page, pageSize } = request;
+		const skip = (page - 1) * pageSize;
+		
+		return await this.userRepository.findAndCount({
+			order:
+				request.sortBy && request.sortOrder
+					? {
+							[request.sortBy]: request.sortOrder,
+					  }
+					: undefined,
+			where: {
+				name: request.filters?.name ? Like(`%${request.filters?.name || ""}%`) : undefined,
+				role: request.filters?.role ?  request.filters?.role : undefined,
+				parentName: request.filters?.parentName ? Like(`%${request.filters?.parentName || ""}%`) : undefined,
+				phoneNumber: request.filters?.phoneNumber ? Like(`%${request.filters?.phoneNumber || ""}%`) : undefined,
+				address: request.filters?.address ? Like(`%${request.filters?.address || ""}%`) : undefined,
+				schoolName: request.filters?.schoolName ? Like(`%${request.filters?.schoolName || ""}%`) : undefined,
+				username: request.filters?.username ? Like(`%${request.filters?.username || ""}%`) : undefined,
+			},
+			skip,
+			take: pageSize,
 			relations: ["courseStudent", "courseStudent.course"],
 		});
 	}
@@ -25,9 +49,12 @@ class UserService {
 		id: number,
 		data: DeepPartial<UserEntity>
 	): Promise<UserEntity> {
-		const updateResult = await this.userRepository.update({
-			id,
-		}, data);
+		const updateResult = await this.userRepository.update(
+			{
+				id,
+			},
+			data
+		);
 		if (updateResult.affected === 0) {
 			throw new Error("User not found");
 		}

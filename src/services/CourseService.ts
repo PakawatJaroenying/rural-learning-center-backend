@@ -5,7 +5,8 @@ import jwt from "jsonwebtoken";
 import { JwtPayload } from "../models/jwtPayloadModel";
 import { CourseEntity } from "../entities/CourseEntity";
 import { CreateCourseModel } from "../models/courseModel";
-import { DeepPartial, LessThanOrEqual, MoreThanOrEqual } from "typeorm";
+import { DeepPartial, LessThanOrEqual, Like, MoreThanOrEqual } from "typeorm";
+import { PaginationRequest } from "../types/Pagination";
 
 // interface CreateCourseModelRepo extends CreateCourseModel {
 // 	teachers: UserEntity[];
@@ -25,12 +26,79 @@ import { DeepPartial, LessThanOrEqual, MoreThanOrEqual } from "typeorm";
 class CourseService {
 	private courseRepository = AppDataSource.getRepository(CourseEntity);
 
-	async getAllCourses(): Promise<CourseEntity[]> {
-		return await this.courseRepository.find({
-			order: {
-				id: "ASC",
+	async getAllCoursesPageIndex(
+		request: PaginationRequest
+	): Promise<[CourseEntity[], number]> {
+		const { page, pageSize } = request;
+		const skip = (page - 1) * pageSize;
+
+		return await this.courseRepository.findAndCount({
+			order:
+				request.sortBy && request.sortOrder
+					? {
+							[request.sortBy]: request.sortOrder,
+					  }
+					: undefined,
+			where: {
+				title: request.filters?.title
+					? Like(`%${request.filters?.title || ""}%`)
+					: undefined,
+				startDate: request.filters?.startDate
+					? request.filters?.startDate
+					: undefined,
+				endDate: request.filters?.endDate
+					? request.filters?.endDate
+					: undefined,
+				teachingDate: request.filters?.teachingDate
+					? request.filters?.teachingDate
+					: undefined,
+				location: request.filters?.location
+					? Like(`%${request.filters?.location || ""}%`)
+					: undefined,
+				isActive: request.filters?.isActive
+					? request.filters?.isActive
+					: undefined,
 			},
-			relations: ["courseStudents"],
+			skip,
+			take: pageSize,
+			relations: {
+				courseStudents: true,
+			},
+		});
+	}
+
+	async getAllCoursesStudentPageIndex(
+		request: PaginationRequest
+	): Promise<[CourseEntity[], number]> {
+		const { page, pageSize } = request;
+		const skip = (page - 1) * pageSize;
+
+		return await this.courseRepository.findAndCount({
+			order:
+				request.sortBy && request.sortOrder
+					? {
+							[request.sortBy]: request.sortOrder,
+					  }
+					: undefined,
+			where: {
+				title: request.filters?.title
+					? Like(`%${request.filters?.title || ""}%`)
+					: undefined,
+				teachingDate: request.filters?.teachingDate
+					? request.filters?.teachingDate
+					: undefined,
+				location: request.filters?.location
+					? Like(`%${request.filters?.location || ""}%`)
+					: undefined,
+				isActive: request.filters?.isActive
+					? request.filters?.isActive
+					: undefined,
+			},
+			skip,
+			take: pageSize,
+			relations: {
+				courseStudents: true,
+			},
 		});
 	}
 
