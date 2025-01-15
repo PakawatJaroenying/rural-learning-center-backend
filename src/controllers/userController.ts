@@ -20,10 +20,6 @@ export const getAllUsers = async (
 		const response: PaginationResponse<any> = {
 			data: users.map((x) => ({
 				...x,
-				enrolledCourses: x.courseStudent.map((y) => ({
-					id: y.course.id,
-					name: y.course.title,
-				})),
 			})),
 			currentPage: req.body.page,
 			pageSize: req.body.pageSize,

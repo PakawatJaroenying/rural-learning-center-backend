@@ -24,7 +24,6 @@ const getAllCourses = async (req: Request, res: Response) => {
 		const response: PaginationResponse<any> = {
 			data: courses.map((x) => ({
 				...x,
-				can_delete: x.courseStudents && x.courseStudents.length === 0,
 			})),
 			currentPage: req.body.page,
 			pageSize: req.body.pageSize,

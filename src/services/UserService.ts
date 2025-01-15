@@ -35,7 +35,12 @@ class UserService {
 			},
 			skip,
 			take: pageSize,
-			relations: ["courseStudent", "courseStudent.course"],
+			relations: {
+				courseStudent:{
+					course: true
+				},
+				courseTeachers:true
+			},
 		});
 	}
 

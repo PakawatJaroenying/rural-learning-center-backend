@@ -52,24 +52,28 @@ export class UserEntity {
 	@Column({ type: "text", nullable: true })
 	image: string | null = null;
 
-	@ManyToMany(() => CourseEntity, (course) => course.teachers, {
-		cascade: true,
-	})
-	courseTeachers!: CourseEntity[];
-
-	@OneToMany(() => CourseStudentEntity, (course) => course.student, {
-		cascade: true,
-	})
-	courseStudent!: CourseStudentEntity[];
-
-	//updateBy
-	@ManyToOne(() => UserEntity)
-	@JoinColumn()
-	updatedBy: UserEntity | null = null;
-
 	@Column({
 		type: "timestamp",
 		nullable: true,
 	})
 	updatedAt: Date | null = null;
+
+	@ManyToMany(() => CourseEntity, (course) => course.teachers, {
+		cascade: true,
+		onDelete: "CASCADE",
+	})
+	courseTeachers!: CourseEntity[];
+
+	@OneToMany(() => CourseStudentEntity, (course) => course.student, {
+		cascade: true,
+		onDelete: "CASCADE",
+	})
+	courseStudent!: CourseStudentEntity[];
+
+	@ManyToOne(() => UserEntity, {
+		cascade: true,
+		onDelete: "SET NULL",
+	})
+	@JoinColumn()
+	updatedBy: UserEntity | null = null;
 }

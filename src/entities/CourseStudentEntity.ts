@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, ManyToOne, Column } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, ManyToOne, Column, JoinColumn } from "typeorm";
 import { UserEntity } from "./UserEntity";
 import { CourseEntity } from "./CourseEntity";
 
@@ -6,12 +6,6 @@ import { CourseEntity } from "./CourseEntity";
 export class CourseStudentEntity {
 	@PrimaryGeneratedColumn()
 	id!: number;
-
-	@ManyToOne(() => CourseEntity, (course) => course.courseStudents)
-	course!: CourseEntity;
-
-	@ManyToOne(() => UserEntity, (student) => student.courseStudent)
-	student!: UserEntity;
 
 	@Column({ type: "float", nullable: true })
 	pretestScore!: number | null;
@@ -21,4 +15,18 @@ export class CourseStudentEntity {
 
 	@Column({ type:'text', nullable: true })
 	comment!: string | null;
+
+
+	@ManyToOne(() => CourseEntity, (course) => course.courseStudents,{
+		onDelete: "CASCADE",
+	})
+	@JoinColumn()
+	course!: CourseEntity;
+
+	@ManyToOne(() => UserEntity, (student) => student.courseStudent,{
+		onDelete: "CASCADE",
+	})
+	@JoinColumn()
+	student!: UserEntity;
+
 }

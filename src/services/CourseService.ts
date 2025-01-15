@@ -61,9 +61,7 @@ class CourseService {
 			},
 			skip,
 			take: pageSize,
-			relations: {
-				courseStudents: true,
-			},
+			
 		});
 	}
 

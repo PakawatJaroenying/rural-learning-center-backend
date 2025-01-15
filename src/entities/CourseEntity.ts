@@ -72,14 +72,7 @@ export class CourseEntity {
 	})
 	isActive: boolean = true;
 
-	@ManyToMany(() => UserEntity, (teacher) => teacher.courseTeachers)
-	@JoinTable({
-		name: "course_teachers",
-	})
-	teachers!: UserEntity[];
 
-	@OneToMany(() => CourseStudentEntity, (courseStudent) => courseStudent.course)
-	courseStudents!: CourseStudentEntity[];
 
 	@Column({
 		type: "timestamp",
@@ -93,9 +86,26 @@ export class CourseEntity {
 	})
 	updatedAt: Date | null = null;
 
-	@ManyToOne(() => UserEntity)
+	@ManyToMany(() => UserEntity, (teacher) => teacher.courseTeachers,{
+		onDelete: "CASCADE",
+	})
+	@JoinTable({
+		name: "course_teachers",
+	})
+	teachers!: UserEntity[];
+
+	@OneToMany(() => CourseStudentEntity, (courseStudent) => courseStudent.course,{
+		onDelete: "CASCADE",
+	})
+	courseStudents!: CourseStudentEntity[];
+
+	@ManyToOne(() => UserEntity,{
+		onDelete: "SET NULL",
+	})
 	createdBy!: UserEntity;
 
-	@ManyToOne(() => UserEntity)
+	@ManyToOne(() => UserEntity,{
+		onDelete: "SET NULL"
+	})
 	updatedBy: UserEntity | null = null;
 }
