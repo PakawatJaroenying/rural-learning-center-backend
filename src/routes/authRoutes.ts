@@ -17,7 +17,6 @@ router.post(
 	"/refresh-token",
 	refreshTokenValidator,
 	validateRequest,
-	authenMiddleware,
 	Container.get(CurrentUserService).authorizeUserMiddleware,
 	refreshToken
 );
